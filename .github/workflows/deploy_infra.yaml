@@ -1,0 +1,45 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Validate S3 existence
+        id: s3_check
+        run: |
+          if aws s3api head-bucket --bucket "my-bucket-name"; then
+            echo "exists=true" >> $GITHUB_ENV
+          else
+            echo "exists=false" >> $GITHUB_ENV
+          fi
+
+      - name: Run Terraform for S3
+        if: env.exists == 'false'
+        run: |
+          cd modules/s3
+          terraform init
+          terraform apply -auto-approve
+
+  apply_other_modules:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Apply remaining modules
+        run: |
+          # Adapte lógica similar aqui para outros módulos

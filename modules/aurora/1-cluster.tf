@@ -16,10 +16,11 @@ resource "aws_security_group" "sg_for_aurora" {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.private_subnets_cidr_block
   }
 
   tags = {
+    Project = "Frameshot"
     Name = "aurora-security-group"
   }
 }
@@ -43,14 +44,7 @@ resource "aws_rds_cluster" "serverless_aurora_pg" {
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.sg_for_aurora.id]
   database_name      = var.database_name
-  engine_mode        = "serverless"
-
-  scaling_configuration {
-    min_capacity = 2
-    max_capacity = 4
-    auto_pause   = true
-    seconds_until_auto_pause = 1800  
-  }
+  engine_mode        = "provisioned"
 
   tags = {
     Name = "serverless_aurora_pg"

@@ -1,45 +1,42 @@
-name: Deploy Infrastructure
+name: Terraform Plan and Apply
 
 on:
   push:
     branches:
-      - main
+      - main  # Ou a branch que você deseja monitorar
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  terraform:
+    runs-on: ubuntu-latest  # Definindo o ambiente para rodar no Ubuntu
 
+    steps:
+      # Passo 1: Verificar o repositório
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Passo 2: Configurar AWS CLI com os Secrets
+      - name: Set up AWS CLI
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set aws_session_token ${{ secrets.AWS_SESSION_TOKEN }}
+          aws configure set region ${{ secrets.AWS_REGION }}
+
+      # Passo 3: Instalar Terraform
       - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.5.7
+          terraform_version: 1.3.5  # Defina a versão do Terraform que você deseja usar
 
-      - name: Validate S3 existence
-        id: s3_check
-        run: |
-          if aws s3api head-bucket --bucket "my-bucket-name"; then
-            echo "exists=true" >> $GITHUB_ENV
-          else
-            echo "exists=false" >> $GITHUB_ENV
-          fi
+      # Passo 4: Inicializar o Terraform
+      - name: Terraform Init
+        run: terraform init
 
-      - name: Run Terraform for S3
-        if: env.exists == 'false'
-        run: |
-          cd modules/s3
-          terraform init
-          terraform apply -auto-approve
+      # Passo 5: Rodar Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -var="db_master_username=${{ secrets.DB_MASTER_USERNAME }}" -var="db_master_password=${{ secrets.DB_MASTER_PASSWORD }}" -var="db_name=${{ secrets.DB_NAME }}"
 
-  apply_other_modules:
-    needs: validate
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Passo 6: Rodar Terraform Apply
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var="db_master_username=${{ secrets.DB_MASTER_USERNAME }}" -var="db_master_password=${{ secrets.DB_MASTER_PASSWORD }}" -var="db_name=${{ secrets.DB_NAME }}"
 
-      - name: Apply remaining modules
-        run: |
-          # Adapte lógica similar aqui para outros módulos

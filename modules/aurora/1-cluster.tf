@@ -43,7 +43,7 @@ resource "aws_rds_cluster" "serverless_aurora_pg" {
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.sg_for_aurora.id]
   database_name      = var.database_name
-  engine_mode        = "serverless"
+  engine_mode        = "provisioned"
 
   scaling_configuration {
     min_capacity = 2

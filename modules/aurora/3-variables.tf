@@ -28,3 +28,8 @@ variable "private_subnets" {
   description = "The subnets used for the cluster"
   type = list(string)
 }
+
+variable "private_subnets_cidr_block" {
+  description = "The subnets IP Blocks"
+  type = list(string)
+}

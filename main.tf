@@ -19,6 +19,11 @@ terraform {
     }
 }
 
+locals {
+  private_subnets_ip_bock = ["10.0.0.0/19", "10.0.32.0/19", "10.0.64.0/19"]
+  public_subnets_ip_bock = ["10.0.96.0/19", "10.0.128.0/19", "10.0.160.0/19"]
+}
+
 module "cognito" {
   source = "./modules/cognito"
   aws_region = var.aws_region
@@ -38,7 +43,7 @@ module "s3" {
   source = "./modules/s3"
   bucket_name = "frameshot-alt"
   notification_queue_arn =  module.sqs.queue_arns.S3Notifications-a
-
+  notification_queue_url = module.sqs.queue_urls.S3Notifications-a
   depends_on = [ module.sqs ]
 }
 
@@ -46,14 +51,15 @@ module "vpc" {
     source = "./modules/vpc_app"
     vpc_name = "frameshot-vpc"
     azs = ["us-east-1a", "us-east-1b", "us-east-1c"]
-    private_subnets = ["10.0.0.0/19", "10.0.32.0/19"]
-    public_subnets = ["10.0.64.0/19", "10.0.96.0/19"]
+    private_subnets = local.private_subnets_ip_bock
+    public_subnets = local.public_subnets_ip_bock
 }
 
 module "aurora" {
     source = "./modules/aurora"
     vpc_id = module.vpc.vpc_id
     private_subnets = module.vpc.private_subnets
+    private_subnets_cidr_block = local.private_subnets_ip_bock
     cluster_identifier = "frameshot-aurora-cluster"
     db_master_username = var.db_master_username
     db_master_password = var.db_master_password

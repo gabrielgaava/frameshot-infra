@@ -1,5 +1,5 @@
 resource "aws_ecs_service" "fargate_service-api" {
-  name            = "frameshot-fargate-service"
+  name            = "framesho-api"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.frameshot-api-task.arn
   desired_count   = 1
@@ -18,7 +18,7 @@ resource "aws_ecs_service" "fargate_service-api" {
 }
 
 resource "aws_ecs_service" "fargate_service-app" {
-  name            = "frameshot-fargate-service"
+  name            = "framesho-app"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.frameshot-app-task.arn
   desired_count   = 1

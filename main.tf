@@ -38,6 +38,8 @@ module "s3" {
   source = "./modules/s3"
   bucket_name = "frameshot-alt"
   notification_queue_arn =  module.sqs.queue_arns.S3Notifications-a
+
+  depends_on = [ module.sqs ]
 }
 
 module "vpc" {  
@@ -56,6 +58,8 @@ module "aurora" {
     db_master_username = var.db_master_username
     db_master_password = var.db_master_password
     database_name = var.db_name
+
+    depends_on = [ module.vpc ]
 }
 
 module "ecr" {
@@ -69,6 +73,8 @@ module "ecs" {
   vpc_id = module.vpc.vpc_id
   api_ecr_url = module.ecr.repository_urls.frameshot-api
   app_ecr_url = module.ecr.repository_urls.frameshot-app
+
+  depends_on = [ module.vpc, module.ecr ]
 }
 
 variable "aws_access_key" {}

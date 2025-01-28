@@ -1,17 +1,5 @@
-provider "aws" {
-  region = "us-east-1"
-}
-
 data "aws_vpc" "existing_vpc" {
-  id = "vpc-071bea8d33ac95291"
-}
-
-data "aws_subnet" "private_subnet_a" {
-  id = "subnet-09160f318b11efe6d"
-}
-
-data "aws_subnet" "private_subnet_b" {
-  id = "subnet-03c65c0f56d7b00d5"
+  id = var.vpc_id
 }
 
 resource "aws_security_group" "sg_for_aurora" {
@@ -38,10 +26,7 @@ resource "aws_security_group" "sg_for_aurora" {
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name       = "aurora-subnet-group"
-  subnet_ids = [
-    data.aws_subnet.private_subnet_a.id,
-    data.aws_subnet.private_subnet_b.id
-  ]
+  subnet_ids = var.private_subnets
 
   tags = {
     Name = "aurora-subnet-group"
@@ -51,26 +36,23 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 resource "aws_rds_cluster" "serverless_aurora_pg" {
   engine             = "aurora-postgresql"
   engine_version     = "13.12"
-  cluster_identifier = "serverless-aurora-pg-cluster"
+  cluster_identifier = var.cluster_identifier
   master_username    = var.db_master_username
   master_password    = var.db_master_password
   skip_final_snapshot = true
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.sg_for_aurora.id]
-  database_name      = "galega"
+  database_name      = var.database_name
   engine_mode        = "serverless"
 
   scaling_configuration {
     min_capacity = 2
     max_capacity = 4
-    auto_pause   = false
+    auto_pause   = true
+    seconds_until_auto_pause = 1800  
   }
 
   tags = {
     Name = "serverless_aurora_pg"
   }
-}
-
-output "endpoint" {
-  value = aws_rds_cluster.serverless_aurora_pg.endpoint
 }

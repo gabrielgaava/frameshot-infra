@@ -1,9 +1,9 @@
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "my-ecs-cluster"
+  name = var.cluster_name
 }
 
 resource "aws_security_group" "ecs_security_group" {
-  name        = "frameshot-ecs-sg"
+  name        = "${var.cluster_name}-ecs-sg"
   description = "Allow HTTP traffic to ECS tasks"
 
   ingress {

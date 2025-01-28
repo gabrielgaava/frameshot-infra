@@ -1,0 +1,29 @@
+name: Terraform Validation
+
+on:
+  pull_request:
+    branches:
+      - main  # Isso irá rodar para PRs enviados para a branch 'main'
+
+jobs:
+  terraform-validation:
+    runs-on: ubuntu-latest  # Definindo o ambiente para rodar no Ubuntu
+
+    steps:
+      # Passo 1: Verificar o repositório
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Passo 2: Instalar Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.3.5  # Defina a versão do Terraform que você deseja usar
+
+      # Passo 3: Inicializar o Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Passo 4: Validar a configuração do Terraform
+      - name: Terraform Validate
+        run: terraform validate

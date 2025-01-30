@@ -1,14 +1,14 @@
 resource "aws_ecs_cluster" "ecs_cluster" {
-  name = "my-ecs-cluster"
+  name = var.cluster_name
 }
 
 resource "aws_security_group" "ecs_security_group" {
-  name        = "frameshot-ecs-sg"
-  description = "Allow HTTP traffic to ECS tasks"
+  name        = "${var.cluster_name}-ecs-sg"
+  description = "Allow all traffic to ECS tasks"
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 0
+    to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

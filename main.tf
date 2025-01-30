@@ -33,17 +33,17 @@ module "cognito" {
 module "sqs" {
   source = "./modules/sqs"
   sqs_queues = [ 
-    {name = "S3Notifications-a", dead_letter_queue = false, is_fifo = false},
-    {name = "VideoProcessInput-a", dead_letter_queue = false, is_fifo = false},
-    {name = "VideoProcessOutput-a", dead_letter_queue = false, is_fifo = false},
+    {name = "S3Notifications", dead_letter_queue = false, is_fifo = false},
+    {name = "VideoProcessInput", dead_letter_queue = false, is_fifo = false},
+    {name = "VideoProcessOutput", dead_letter_queue = false, is_fifo = false},
   ]
 }
 
 module "s3" {
   source = "./modules/s3"
-  bucket_name = "frameshot-alt"
-  notification_queue_arn =  module.sqs.queue_arns.S3Notifications-a
-  notification_queue_url = module.sqs.queue_urls.S3Notifications-a
+  bucket_name = "frameshot"
+  notification_queue_arn =  module.sqs.queue_arns.S3Notifications
+  notification_queue_url = module.sqs.queue_urls.S3Notifications
   depends_on = [ module.sqs ]
 }
 
@@ -75,6 +75,7 @@ module "ecr" {
 
 module "ecs" {
   source = "./modules/ecs"
+  cluster_name = "frameshot-cluster"
   private_subnets = module.vpc.private_subnets
   vpc_id = module.vpc.vpc_id
   api_ecr_url = module.ecr.repository_urls.frameshot-api

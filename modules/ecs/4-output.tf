@@ -3,6 +3,7 @@ output "ecs_cluster_name" {
   description = "The name of the ECS cluster"
 }
 
+/*
 output "ecs_service_frameshot-api" {
   value = aws_ecs_service.fargate_service-api.name
   description = "The name of the ECS service"
@@ -21,3 +22,4 @@ output "task_definition_arn-api" {
 output "task_definition_arn-app" {
   value = aws_ecs_task_definition.frameshot-app-task.arn
 }
+*/

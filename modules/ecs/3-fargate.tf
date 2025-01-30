@@ -1,4 +1,4 @@
-resource "aws_ecs_service" "fargate_service-api" {
+/*resource "aws_ecs_service" "fargate_service-api" {
   name            = "framesho-api"
   cluster         = aws_ecs_cluster.ecs_cluster.id
   task_definition = aws_ecs_task_definition.frameshot-api-task.arn
@@ -35,3 +35,4 @@ resource "aws_ecs_service" "fargate_service-app" {
     aws_ecs_task_definition.frameshot-app-task
   ]
 }
+*/

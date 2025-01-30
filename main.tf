@@ -42,8 +42,8 @@ module "sqs" {
 module "s3" {
   source = "./modules/s3"
   bucket_name = "frameshot"
-  notification_queue_arn =  module.sqs.queue_arns.S3Notifications-a
-  notification_queue_url = module.sqs.queue_urls.S3Notifications-a
+  notification_queue_arn =  module.sqs.queue_arns.S3Notifications
+  notification_queue_url = module.sqs.queue_urls.S3Notifications
   depends_on = [ module.sqs ]
 }
 

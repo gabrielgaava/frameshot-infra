@@ -8,6 +8,7 @@ resource "aws_cloudwatch_log_group" "frameshot-app-log" {
   retention_in_days = 7                      
 }
 
+/*
 resource "aws_ecs_task_definition" "frameshot-api-task" {
   family                   = "frameshot-api-task"
   requires_compatibilities = ["FARGATE"]
@@ -38,8 +39,8 @@ resource "aws_ecs_task_definition" "frameshot-api-task" {
     }
   ])
 
-  execution_role_arn = "arn:aws:iam::880591616172:role/LabRole"
-  task_role_arn      = "arn:aws:iam::880591616172:role/LabRole"
+  execution_role_arn = "arn:aws:iam::282809433328:role/LabRole"
+  task_role_arn      = "arn:aws:iam::282809433328:role/LabRole"
 }
 
 resource "aws_ecs_task_definition" "frameshot-app-task" {
@@ -72,7 +73,7 @@ resource "aws_ecs_task_definition" "frameshot-app-task" {
     }
   ])
 
-  execution_role_arn = "arn:aws:iam::880591616172:role/LabRole"
-  task_role_arn      = "arn:aws:iam::880591616172:role/LabRole"
+  execution_role_arn = "arn:aws:iam::282809433328:role/LabRole"
+  task_role_arn      = "arn:aws:iam::282809433328:role/LabRole"
 }
-
+*/

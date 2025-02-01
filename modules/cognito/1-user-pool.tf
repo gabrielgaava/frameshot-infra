@@ -13,4 +13,8 @@ resource "aws_cognito_user_pool" "user_pool" {
   }
 
   mfa_configuration = "OFF" 
+
+  email_configuration {
+    email_sending_account = "COGNITO_DEFAULT"
+  }
 }
